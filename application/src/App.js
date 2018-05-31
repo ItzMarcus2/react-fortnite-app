@@ -25,7 +25,6 @@ class App extends Component {
     }
   }
 
-
   componentDidMount() {
     return fetch('http://localhost:3000/', {
       method: 'get',
@@ -77,7 +76,6 @@ class App extends Component {
   }
 
   render() {
-    const {array} = this.state;
     return (
           <div>
             <div className="header-container">
@@ -93,8 +91,8 @@ class App extends Component {
                 height={1000}
                 headerHeight={20}
                 rowHeight={50}
-                rowCount={array.length}
-                rowGetter={({ index }) => array[index]}
+                rowCount={this.state.array.length}
+                rowGetter={({ index }) => this.state.array[index]}
                 >
                 <Column
                   label='Id'
