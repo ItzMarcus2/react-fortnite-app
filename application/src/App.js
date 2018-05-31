@@ -30,6 +30,26 @@ class App extends Component {
     }
   }
 
+  convertDate(string) {
+
+    var date = new Date(string);
+    var dd = date.getDate();
+    var mm = date.getMonth()+1;
+
+    var yyyy = date.getFullYear();
+
+    if (dd < 10) {
+      dd='0'+dd;
+    }
+
+    if (mm < 10) {
+      mm='0'+mm;
+    }
+
+    var newString = dd+'/'+mm+'/'+yyyy;
+    return newString;
+  }
+
   updateData() {
     this.database.once('value').then(snapshot => {
       var array = [];
@@ -39,7 +59,7 @@ class App extends Component {
           id: count,
           player: childSnapshot.val().player,
           kills: childSnapshot.val().kills,
-          date: childSnapshot.val().date
+          date: this.convertDate(childSnapshot.val().date)
         })
         count = count + 1;
       })
@@ -48,8 +68,28 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log('test');
     this.updateData();
+    setTimeout(() => {
+      var dateString = this.state.array[0].date;
+      var date = new Date(dateString);
+      var dd = date.getDate();
+      var mm = date.getMonth()+1;
+
+      var yyyy = date.getFullYear();
+
+      if (dd < 10) {
+        dd='0'+dd;
+      }
+
+      if (mm < 10) {
+        mm='0'+mm;
+      }
+
+      var newString = dd+'/'+mm+'/'+yyyy;
+      console.log(date.getDate());
+      console.log(newString);
+    }, 2000);
+
   }
 
   addWin = () => {
