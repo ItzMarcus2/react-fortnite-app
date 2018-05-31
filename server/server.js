@@ -1,41 +1,32 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host : '127.0.0.1',
+    user : 'marcus',
+    password : '',
+    database : 'fortnite-app'
+  }
+});
 
 const app = express();
 
 app.use(bodyParser.json())
 app.use(cors());
 
-const database = {
-  wins: [
-    {
-      id: '1',
-      player: 'ItzMarcus',
-      kills: 7,
-      winning_date: new Date()
-    },
-    {
-      id: '2',
-      player: 'ItzSabine',
-      kills: 0,
-      winning_date: new Date()
-    }
-  ]
-}
-
 app.get('/', (req, res) => {
-  res.send(database.wins);
+  knex.select('*').from('wins').then(wins => {
+    res.json(wins);
+  })
 })
 
 app.post('/addwin', (req, res) => {
-  database.wins.push({
-    id: '3',
-    player: req.body.player,
-    kills: req.body.kills,
-    winning_date: new Date()
-  })
-  res.send('added win')
+  knex('wins').insert({player: req.body.player, kills: req.body.kills, date: new Date()}).then(data => {
+    console.log(data);
+    res.send('added win');
+  });
 })
 
 app.listen(3000, () => {
