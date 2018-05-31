@@ -23,9 +23,10 @@ app.get('/', (req, res) => {
 })
 
 app.post('/addwin', (req, res) => {
-  knex('wins').insert({player: req.body.player, kills: req.body.kills, date: new Date()}).then(data => {
-    console.log(data);
-    res.send('added win');
+  knex('wins').insert({player: req.body.player, kills: req.body.kills, date: new Date()}).then(win => {
+    knex.select('*').from('wins').then(wins => {
+      res.json(wins);
+    })
   });
 })
 

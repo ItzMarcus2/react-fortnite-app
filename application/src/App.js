@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Column, Table, Grid } from 'react-virtualized';
-import data from './Data/data.js';
+import Swal from 'sweetalert2';
 import 'react-virtualized/styles.css';
 import './App.css';
 
@@ -9,73 +9,92 @@ const tableStyle = {
   marginRight: "auto",
   width: "100%",
   display: "flex",
-  alignItems: "center"
+  alignItems: "center",
+  overflow: "hidden",
+  fontSize: "20px"
 }
 
 class App extends Component {
+
+
   constructor() {
     super();
 
     this.state = {
-      isLoading: true
+      array: []
     }
   }
 
-  getWins() {
-    fetch('http://localhost:3000/', {
+
+  componentDidMount() {
+    return fetch('http://localhost:3000/', {
       method: 'get',
       headers: {'Content-Type': 'application/json'},
     }).then(response => response.json()).then(wins => {
       if (wins) {
-        wins.forEach((item) => {
-          console.log('item', item);
-          data.push(item);
-        })
+        this.setState({array: wins})
       }
-      this.setState({isLoading: false});
     })
-  }
-
-  componentDidMount() {
-    this.getWins();
   }
 
   addWin = () => {
+
+
+
     const player = document.getElementById('player_name').value;
     const kills = document.getElementById('kills').value;
 
-    fetch('http://localhost:3000/addwin', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        player: player,
-        kills: kills
+    if (player !== "" && parseInt(kills) || kills === '0') {
+      Swal({
+          type: 'success',
+          title: '<span style="color: #BFD2FF">Your win has been added!</span>',
+          showConfirmButton: false,
+          background: 'rgba(57, 63, 84, 1)',
+          timer: 1600
       })
-    })
-    this.getWins();
-    this.forceUpdate();
+      document.getElementById('player_name').value = '';
+      document.getElementById('kills').value = '';
+      fetch('http://localhost:3000/addwin', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          player: player,
+          kills: kills
+        })
+      }).then(response => response.json()).then(win => {
+        this.setState({array: win});
+      });
+    } else {
+      Swal({
+          type: 'error',
+          title: '<span style="color: #BFD2FF">Something went wrong..</span>',
+          showConfirmButton: false,
+          background: 'rgba(57, 63, 84, 1)',
+          timer: 1600
+      })
+    }
+
   }
 
   render() {
-    const {isLoading} = this.state;
+    const {array} = this.state;
     return (
-      <div>
-        { isLoading ? <p>Waiting for data</p> :
           <div>
             <div className="header-container">
+              <h1>Fortnite Wins</h1>
+              <p>Add your win to the list below, and no don't lie!</p>
               <input id="player_name" type="text" placeholder="What is your player name?"/>
               <input id="kills" type="text" placeholder="How many kills did you get?"/>
-              <button onClick={() => this.addWin()}>Add win</button>
+              <button onClick={() => this.addWin()}><ion-icon name="add-circle-outline"></ion-icon></button>
             </div>
             <div style={tableStyle}>
               <Table
-                stlye={{display: "flex"}}
-                width={1903}
+                width={1300}
                 height={1000}
                 headerHeight={20}
-                rowHeight={30}
-                rowCount={data.length}
-                rowGetter={({ index }) => data[index]}
+                rowHeight={50}
+                rowCount={array.length}
+                rowGetter={({ index }) => array[index]}
                 >
                 <Column
                   label='Id'
@@ -100,8 +119,6 @@ class App extends Component {
               </Table>
             </div>
           </div>
-        }
-      </div>
     );
   }
 }

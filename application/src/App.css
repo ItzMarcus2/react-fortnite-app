@@ -4,8 +4,84 @@ html, body {
 }
 
 body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
+  color: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
+}
+
+.header-container {
+  margin-top: 100px;
+  margin-left: 5%;
+}
+
+.header-container h1 {
+  margin-bottom: 0;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+.header-container p {
+  margin-top: 1px;
+}
+
+.header-container input {
+  font-size: 16px;
+  height: 30px;
+  border: none;
+  width: 200px;
+  padding: 1.2rem 1.4rem 1.2rem;
+  margin-right: 15px;
+  border-radius: 2px;
+  background: rgba(57, 63, 84, 0.8);
+  color: #BFD2FF;
+}
+
+.header-container input:focus {
+  outline: none;
+}
+
+.header-container input::placeholder {
+  color: #7881A1;
+}
+
+.header-container button {
+  font-size: 40px;
+  vertical-align: middle;
+  height: 60px;
+  background: transparent;
+  border: none;
+  color: #BFD2FF;
+}
+
+.header-container button:focus {
+  outline: none;
+}
+
+.header-container button:active {
+  color: #7881A1;
+}
+
+.header-container button ion-icon {
+  padding-top: 8px;
+}
+
+.ReactVirtualized__Table {
+  margin-top: 0;
+  overflow: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ReactVirtualized__Grid {
+  outline: none;
+}
+
+.ReactVirtualized__Table__row {
+  background: rgba(57, 63, 84, 0.8);
+}
+
+.ReactVirtualized__Table__headerRow {
+  margin-top: 20px;
 }
