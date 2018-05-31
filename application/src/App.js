@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Column, Table, Grid } from 'react-virtualized';
 import Swal from 'sweetalert2';
+import firebase from 'firebase/app';
+import config from './Firebase.js'
+import 'firebase/database';
 import 'react-virtualized/styles.css';
 import './App.css';
 
@@ -16,24 +19,37 @@ const tableStyle = {
 
 class App extends Component {
 
-
   constructor() {
     super();
+
+    this.app = firebase.initializeApp(config);
+    this.database = this.app.database().ref().child('wins');
 
     this.state = {
       array: []
     }
   }
 
-  componentDidMount() {
-    return fetch('http://localhost:3000/', {
-      method: 'get',
-      headers: {'Content-Type': 'application/json'},
-    }).then(response => response.json()).then(wins => {
-      if (wins) {
-        this.setState({array: wins})
-      }
+  updateData() {
+    this.database.once('value').then(snapshot => {
+      var array = [];
+      var count = 1;
+      snapshot.forEach(childSnapshot => {
+        array.push({
+          id: count,
+          player: childSnapshot.val().player,
+          kills: childSnapshot.val().kills,
+          date: childSnapshot.val().date
+        })
+        count = count + 1;
+      })
+      this.setState({array: array});
     })
+  }
+
+  componentDidMount() {
+    console.log('test');
+    this.updateData();
   }
 
   addWin = () => {
@@ -42,6 +58,7 @@ class App extends Component {
 
     const player = document.getElementById('player_name').value;
     const kills = document.getElementById('kills').value;
+    const date = new Date();
 
     if (player !== "" && parseInt(kills) || kills === '0') {
       Swal({
@@ -53,16 +70,13 @@ class App extends Component {
       })
       document.getElementById('player_name').value = '';
       document.getElementById('kills').value = '';
-      fetch('http://localhost:3000/addwin', {
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          player: player,
-          kills: kills
-        })
-      }).then(response => response.json()).then(win => {
-        this.setState({array: win});
-      });
+
+      this.database.push().set({
+        player: player,
+        kills: kills,
+        date: date.toString()
+      })
+      this.updateData();
     } else {
       Swal({
           type: 'error',
