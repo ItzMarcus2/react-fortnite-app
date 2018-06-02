@@ -11,9 +11,38 @@ body {
   background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
 }
 
+.search-container {
+  float: right;
+  height: 70px;
+  width: 250px;
+  display: inline;
+}
+
+.search-container input {
+  float: right;
+  font-size: 16px;
+  height: 31px;
+  border: none;
+  width: 51px;
+  padding: 1.2rem 1.4rem 1.2rem;
+  border-radius: 2px;
+  transition: width .5s ease-in-out;
+  background: rgba(57, 63, 84, 0.8);
+  color: #BFD2FF;
+}
+
+.search-container input:focus {
+  outline: none;
+  width: 250px;
+}
+
+
 .header-container {
+  width: 90%;
+  display: inline-block;
   margin-top: 100px;
   margin-left: 5%;
+  margin-right: 67px;
 }
 
 .header-container h1 {
@@ -26,7 +55,7 @@ body {
   margin-top: 1px;
 }
 
-.header-container input {
+.header-container .input {
   font-size: 16px;
   height: 30px;
   border: none;
@@ -38,7 +67,7 @@ body {
   color: #BFD2FF;
 }
 
-.header-container input:focus {
+.header-container .input:focus {
   outline: none;
 }
 
@@ -65,6 +94,21 @@ body {
 
 .header-container button ion-icon {
   padding-top: 8px;
+}
+
+.header-container .tracking {
+  display: inline-block;
+  text-transform: uppercase;
+  color: #7881A1;
+  width: 463px;
+  background: rgba(57, 63, 84, 0.8);
+  padding: 1.2rem 1.4rem 1.2rem;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+.header-container .tracking .tracking-span {
+  color: #BFD2FF;
 }
 
 .ReactVirtualized__Table {

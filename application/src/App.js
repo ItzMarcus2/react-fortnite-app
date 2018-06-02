@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Column, Table, Grid } from 'react-virtualized';
+import { Column, Table, Grid, SortDirection } from 'react-virtualized';
 import Swal from 'sweetalert2';
 import firebase from 'firebase/app';
 import config from './Firebase.js'
@@ -17,6 +17,12 @@ const tableStyle = {
   fontSize: "20px"
 }
 
+const hrStyle = {
+  width: "504px",
+  marginLeft: "0%",
+  marginRight: "auto"
+}
+
 class App extends Component {
 
   constructor() {
@@ -26,8 +32,34 @@ class App extends Component {
     this.database = this.app.database().ref().child('wins');
 
     this.state = {
-      array: []
+      array: [],
+      wins: 0,
+      kills: 0,
+      sortBy: 'player',
+      sortDirection: 'ASC',
+      searchField: ''
     }
+
+    this.sortThis = this.sortThis.bind(this);
+  }
+
+  sortThis({defaultSortDirection, event, sortBy, sortDirection}) {
+    const list = this.state.array.sort((a, b) => {
+      if (sortDirection === SortDirection.ASC) {
+        if (sortBy === 'kills' || sortBy === 'id') {
+          return a[sortBy] - b[sortBy];
+        } else {
+          return a[sortBy] > b[sortBy];
+        }
+
+      }
+      if (sortBy === 'kills' || sortBy === 'id') {
+        return b[sortBy] - a[sortBy];
+      } else {
+        return a[sortBy] < b[sortBy];
+      }
+    })
+    this.setState({array: list, sortDirection: sortDirection, sortBy: sortBy});
   }
 
   convertDate(string) {
@@ -54,6 +86,7 @@ class App extends Component {
     this.database.once('value').then(snapshot => {
       var array = [];
       var count = 1;
+      var killCount = 0;
       snapshot.forEach(childSnapshot => {
         array.push({
           id: count,
@@ -62,7 +95,14 @@ class App extends Component {
           date: this.convertDate(childSnapshot.val().date)
         })
         count = count + 1;
+        killCount = killCount + parseInt(childSnapshot.val().kills);
       })
+      if (this.state.wins === 0 && this.state.kills === 0) {
+        this.setState({
+          wins: count - 1,
+          kills: killCount
+        })
+      }
       this.setState({array: array});
     })
   }
@@ -93,8 +133,6 @@ class App extends Component {
   }
 
   addWin = () => {
-
-
 
     const player = document.getElementById('player_name').value;
     const kills = document.getElementById('kills').value;
@@ -129,15 +167,31 @@ class App extends Component {
 
   }
 
+  onSearchChnage = (event) => {
+    this.setState({searchField: event.target.value});
+  }
+
   render() {
+    const dataToDisplay = this.state.array.filter(item => {
+      return item.player.toLowerCase().includes(this.state.searchField.toLowerCase());
+    })
     return (
           <div>
             <div className="header-container">
-              <h1>Fortnite Wins</h1>
-              <p>Add your win to the list below, and no don't lie!</p>
-              <input id="player_name" type="text" placeholder="What is your player name?"/>
-              <input id="kills" type="text" placeholder="How many kills did you get?"/>
-              <button onClick={() => this.addWin()}><ion-icon name="add-circle-outline"></ion-icon></button>
+              <div>
+                <h1>Fortnite Wins</h1>
+                <p>Add your win to the list below, and no don't lie!</p>
+                <input className="input" id="player_name" type="text" placeholder="What is your player name?"/>
+                <input className="input" id="kills" type="text" placeholder="How many kills did you get?"/>
+                <button onClick={() => this.addWin()}><ion-icon name="add-circle-outline"></ion-icon></button>
+                <div className="search-container">
+                  <input id="search" type="text" placeholder="Search for a player.." onChange={this.onSearchChnage}/>
+                </div>
+              </div>
+              <hr style={hrStyle}/>
+              <div>
+                <p className="tracking">Currently tracking <span className="tracking-span">{this.state.wins}</span> wins and <span className="tracking-span">{this.state.kills}</span> kills</p>
+              </div>
             </div>
             <div style={tableStyle}>
               <Table
@@ -145,8 +199,11 @@ class App extends Component {
                 height={1000}
                 headerHeight={20}
                 rowHeight={50}
-                rowCount={this.state.array.length}
-                rowGetter={({ index }) => this.state.array[index]}
+                rowCount={dataToDisplay.length}
+                rowGetter={({ index }) => dataToDisplay[index]}
+                sort={this.sortThis}
+                sortBy={this.state.sortBy}
+                sortDirection={this.state.sortDirection}
                 >
                 <Column
                   label='Id'
