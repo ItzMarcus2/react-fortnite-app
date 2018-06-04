@@ -10,7 +10,7 @@
 /build
 
 # firebase information
-Firebase.js
+config.js
 
 # misc
 .DS_Store
