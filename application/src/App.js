@@ -4,6 +4,7 @@ import {config} from './config.js';
 import {getFirebase} from './Firebase.js';
 import Home from './pages/home/Home';
 import StatsPage from './pages/stats/StatsPage';
+import Admin from './pages/admin/Admin';
 
 class App extends Component {
 
@@ -20,6 +21,7 @@ class App extends Component {
           <Switch>
             <Route path="/"  component={Home} exact/>
             <Route path="/stats"  component={StatsPage} exact/>
+            <Route path="/admin" component={Admin} exact/>
             {/* <Route component={Error}/> */}
           </Switch>
         </div>

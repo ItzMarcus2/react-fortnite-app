@@ -70,7 +70,7 @@ class App extends Component {
 
     if (this.state.wins === 0 && this.state.kills === 0) {
       this.setState({
-        wins: count - 1,
+        wins: count,
         kills: killCount
       })
     }

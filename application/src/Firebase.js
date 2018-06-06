@@ -31,7 +31,7 @@ export function getData() {
         count = count + 1;
         killCount = killCount + parseInt(childSnapshot.val().kills);
       })
-      resolve([array, count, killCount]);
+      resolve([array, count - 1, killCount]);
     })
   })
 }
@@ -46,9 +46,17 @@ export function pushWin(player, kills, date) {
 
 export function getBestWin() {
   return new Promise(resolve => {
-    getDatabaseRef().orderByChild('kills').once('value').then(snapshot => {
-      console.log(snapshot.val());
-      //resolve([player, kills]);
+    getDatabaseRef().once('value').then(snapshot => {
+      var player = '';
+      var kills = 0;
+      snapshot.forEach(childSnapshot => {
+        var childKills = parseInt(childSnapshot.val().kills);
+        if (childKills > kills) {
+          player = childSnapshot.val().player;
+          kills = childKills;
+        }
+      })
+      resolve([player, kills]);
     })
   })
 }
